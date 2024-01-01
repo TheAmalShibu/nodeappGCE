@@ -1,11 +1,18 @@
-csteps:
+steps:
   - name: 'gcr.io/cloud-builders/npm'
     args: ['install']
+
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install', 'express', '--save']
+
   - name: 'gcr.io/cloud-builders/npm'
     args: ['test']
+
   - name: 'gcr.io/cloud-builders/npm'
     args: ['run', 'build']
+
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/ss-devops-408816/github_theamalshibu_nodeappgce', '.']
+
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/ss-devops-408816/github_theamalshibu_nodeappgce']
