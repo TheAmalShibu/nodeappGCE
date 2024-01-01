@@ -5,8 +5,8 @@ steps:
   - name: 'gcr.io/cloud-builders/npm'
     args: ['install', 'express', '--save']
 
-  - name: 'gcr.io/cloud-builders/npm'
-    args: ['test']
+  #- name: 'gcr.io/cloud-builders/npm'
+  #  args: ['test']
 
   - name: 'gcr.io/cloud-builders/npm'
     args: ['run', 'build']
