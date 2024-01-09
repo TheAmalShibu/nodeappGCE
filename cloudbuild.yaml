@@ -35,5 +35,5 @@ steps:
   # Step 6: Restart Application using PM2
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'restart-app-pm2'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 restart nodeappGCE']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', './start_pm2.sh']
 
