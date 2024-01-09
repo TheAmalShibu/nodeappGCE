@@ -13,4 +13,4 @@ steps:
 
   # Step 4: Deploy to Compute Engine instance
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'cd /home/amalshibusocial/nodeappGCE && git pull origin main && npm install && pm2 restart nodeappGCE']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'cd /home/amalshibusocial/nodeappGCE && git pull origin main && npm install && pm2 restart all']
