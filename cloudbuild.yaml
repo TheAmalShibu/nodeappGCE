@@ -1,16 +1,46 @@
 steps:
-  # Step 1: Install dependencies
-  - name: 'gcr.io/cloud-builders/npm'
+  # Install dependencies
+  - name: 'Install Dependencies'
+    id: 'install-dependencies'
+    entrypoint: 'gcr.io/cloud-builders/npm'
     args: ['install']
 
-  # Step 2: Run tests (optional)
-  # - name: 'gcr.io/cloud-builders/npm'
+  # Run tests (optional - uncomment if needed)
+  # - name: 'Run Tests'
+  #   id: 'run-tests'
+  #   entrypoint: 'gcr.io/cloud-builders/npm'
   #   args: ['test']
 
-  # Step 3: Prepare the Compute Engine instance for deployment
-  - name: 'gcr.io/cloud-builders/gcloud'
+  # Configure Git Safe Directory
+  - name: 'Configure Git Safe Directory'
+    id: 'configure-git-safe-dir'
+    entrypoint: 'gcr.io/cloud-builders/gcloud'
     args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'git config --global --add safe.directory /home/amalshibusocial/nodeappGCE']
 
-  # Step 4: Deploy to Compute Engine instance
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'cd /home/amalshibusocial/nodeappGCE && git pull origin main && npm install && pm2 restart nodeappGCE']
+  # Pull Latest Code
+  - name: 'Pull Latest Code from Repository'
+    id: 'pull-latest-code'
+    entrypoint: 'gcr.io/cloud-builders/gcloud'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'cd /home/amalshibusocial/nodeappGCE && git pull origin main']
+
+  # Install Node Dependencies
+  - name: 'Install Node Dependencies'
+    id: 'install-node-dependencies'
+    entrypoint: 'gcr.io/cloud-builders/gcloud'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'cd /home/amalshibusocial/nodeappGCE && npm install']
+
+  # List PM2 Processes
+  - name: 'List PM2 Processes'
+    id: 'list-pm2-processes'
+    entrypoint: 'gcr.io/cloud-builders/gcloud'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 list']
+
+
+
+  # Restart Application with PM2
+  - name: 'Restart Application using PM2'
+    id: 'restart-app-pm2'
+    entrypoint: 'gcr.io/cloud-builders/gcloud'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 restart nodeappGCE']
+
+
