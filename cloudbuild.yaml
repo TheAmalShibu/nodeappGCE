@@ -1,5 +1,12 @@
 steps:
-- name: 'gcr.io/cloud-builders/npm'
-  args: ['install']
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['compute', 'ssh', 'my-vm-instance', '--zone=us-central1-a', '--', 'npm', 'start']
+  # Step 1: Install dependencies
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+
+  # Step 2: Run tests (optional)
+ # - name: 'gcr.io/cloud-builders/npm'
+ #   args: ['test']
+
+  # Step 3: Deploy to Compute Engine instance
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['compute', 'ssh', 'test-ss', '--zone', 'us-west4-b', '--command', 'cd /path/to/your/app && git pull origin master && npm install && pm2 restart all']
