@@ -9,4 +9,4 @@ steps:
 
   # Step 3: Deploy to Compute Engine instance
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['compute', 'ssh', 'test-ss', '--zone', 'us-west4-b', '--command', 'cd /path/to/your/app && git pull origin master && npm install && pm2 restart all']
+    args: ['compute', 'ssh', 'test-ss', '--zone', 'us-west4-b', '--command', 'cd /nodeappGCE && git pull origin master && npm install && pm2 restart all']
