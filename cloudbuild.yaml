@@ -25,6 +25,9 @@ steps:
     args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'cd /home/amalshibusocial/nodeappGCE && npm install']
 
 
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'display-current-username'
+    args: ['compute', 'ssh', 'your-instance-name', '--zone', 'your-instance-zone', '--command', 'whoami']
 
   # Step 7: List PM2 Processes
   - name: 'gcr.io/cloud-builders/gcloud'
