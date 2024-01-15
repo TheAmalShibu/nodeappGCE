@@ -22,7 +22,7 @@ steps:
   # Step 5: Restart Application using PM2
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'restart-app-pm2'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 restart nodeappGCE || pm2 start app.js --name nodeappGCE']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'cd /home/amalshibusocial/nodeappGCE && pm2 restart nodeappGCE || pm2 start app.js --name nodeappGCE']
 
   # Step 6: Save PM2 Process List
   - name: 'gcr.io/cloud-builders/gcloud'
