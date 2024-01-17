@@ -19,10 +19,10 @@ steps:
     id: 'install-node-dependencies'
     args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo sh -c "cd /home/amalshibusocial/nodeappGCE && npm install --verbose"']
 
-  # Step 5: Restart Application using PM2
+  # Step 5: Explicitly Restart Application using PM2
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'restart-app-pm2'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo sh -c "cd /home/amalshibusocial/nodeappGCE && pm2 restart nodeappGCE || pm2 start app.js --name nodeappGCE && pm2 info nodeappGCE"']
+    id: 'explicitly-restart-app'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo sh -c "cd /home/amalshibusocial/nodeappGCE && pm2 restart nodeappGCE"']
 
   # Step 6: Save PM2 Process List
   - name: 'gcr.io/cloud-builders/gcloud'
