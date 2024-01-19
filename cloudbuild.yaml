@@ -19,32 +19,17 @@ steps:
     id: 'install-node-dependencies'
     args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo npm install --verbose']
 
-  # Debugging: Check Current Directory and List Files
+  # Step 5: Explicitly Restart (or Start) Application using PM2
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'check-directory-list-files'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pwd; ls -l /home/amalshibusocial/nodeappGCE']
-
-  # Debugging: Check PM2 List Before Restart
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'check-pm2-list-before'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 list']
-
-  # Step 5: Restart Application using PM2
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'restart-app-pm2'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 restart nodeappGCE || pm2 start app.js --name nodeappGCE']
-
-  # Debugging: Check PM2 List After Restart
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'check-pm2-list-after'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 list; pm2 info nodeappGCE']
+    id: 'explicitly-restart-app'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 restart nodeappGCE || pm2 start /home/amalshibusocial/nodeappGCE/app.js --name nodeappGCE']
 
   # Step 6: Save PM2 Process List
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'save-pm2-process-list'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 save']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo pm2 save && echo "PM2 process list saved"']
 
   # Step 7: Set up PM2 Startup Script
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'setup-pm2-startup-script'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 startup systemd -u amalshibusocial --hp /home/amalshibusocial; pm2 save']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo pm2 startup systemd -u amalshibusocial --hp /home/amalshibusocial; pm2 save && echo "PM2 startup script set up"']
