@@ -7,29 +7,44 @@ steps:
   # Step 2: Configure Git Safe Directory
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'configure-git-safe-dir'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo sh -c "git config --global --add safe.directory /home/amalshibusocial/nodeappGCE && echo Configured Git safe directory"']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo git config --global --add safe.directory /home/amalshibusocial/nodeappGCE; echo "Configured Git safe directory"']
 
   # Step 3: Pull Latest Code from Repository
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'pull-latest-code'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo sh -c "cd /home/amalshibusocial/nodeappGCE && git pull origin main && echo Pulled latest code && git log -1"']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo sh -c "cd /home/amalshibusocial/nodeappGCE; git pull origin main; echo \"Pulled latest code\"; git log -1"']
 
   # Step 4: Install Node Dependencies
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'install-node-dependencies'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo sh -c "cd /home/amalshibusocial/nodeappGCE && npm install --verbose"']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo npm install --verbose']
 
-  # Step 5: Explicitly Restart Application using PM2
+  # Debugging: Check Current Directory and List Files
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'explicitly-restart-app'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo sh -c "cd /home/amalshibusocial/nodeappGCE && pm2 restart nodeappGCE"']
+    id: 'check-directory-list-files'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pwd; ls -l /home/amalshibusocial/nodeappGCE']
+
+  # Debugging: Check PM2 List Before Restart
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'check-pm2-list-before'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 list']
+
+  # Step 5: Restart Application using PM2
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'restart-app-pm2'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 restart nodeappGCE || pm2 start app.js --name nodeappGCE']
+
+  # Debugging: Check PM2 List After Restart
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'check-pm2-list-after'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 list; pm2 info nodeappGCE']
 
   # Step 6: Save PM2 Process List
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'save-pm2-process-list'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo pm2 save && echo PM2 process list saved']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 save']
 
   # Step 7: Set up PM2 Startup Script
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'setup-pm2-startup-script'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo sh -c "pm2 startup systemd -u amalshibusocial --hp /home/amalshibusocial && pm2 save && echo PM2 startup script set up"']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 startup systemd -u amalshibusocial --hp /home/amalshibusocial; pm2 save']
