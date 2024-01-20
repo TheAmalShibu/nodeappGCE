@@ -1,40 +1,15 @@
 steps:
-  # Step 1: Install dependencies
-  - name: 'gcr.io/cloud-builders/npm'
-    id: 'install-dependencies'
-    args: ['install']
-
-  # Step 2: Configure Git Safe Directory
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'configure-git-safe-dir'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo git config --global --add safe.directory /home/amalshibusocial/nodeappGCE; echo "Configured Git safe directory"']
-
-  # Step 3: Pull Latest Code from Repository
+  # Step 1: Pull Latest Code from Repository
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'pull-latest-code'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo sh -c "cd /home/amalshibusocial/nodeappGCE; git pull origin main; echo \"Pulled latest code\"; git log -1"']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo git -C /home/amalshibusocial/nodeappGCE pull origin main']
 
-  # Step 4: Install Node Dependencies
+  # Step 2: Install Node Dependencies
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'install-node-dependencies'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo npm install --verbose']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'cd /home/amalshibusocial/nodeappGCE && sudo npm install']
 
-  # Step 5: Stop existing application using PM2
+  # Step 3: Restart Node.js Application using Supervisor
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'stop-app-pm2'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 stop nodeappGCE || true']
-  
-  # Step 6: Restart (or Start) Application using PM2
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'restart-app-pm2'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'pm2 start /home/amalshibusocial/nodeappGCE/app.js --name nodeappGCE']
-
-  # Step 7: Save PM2 Process List
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'save-pm2-process-list'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo pm2 save && echo "PM2 process list saved"']
-
-  # Step 8: Set up PM2 Startup Script
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'setup-pm2-startup-script'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo pm2 startup systemd -u amalshibusocial --hp /home/amalshibusocial; pm2 save && echo "PM2 startup script set up"']
+    id: 'restart-nodeapp'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo supervisorctl restart nodeapp']
