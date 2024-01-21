@@ -9,7 +9,18 @@ steps:
     id: 'install-node-dependencies'
     args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'cd /home/amalshibusocial/nodeappGCE && sudo npm install']
 
-  # Step 3: Restart Node.js Application using Supervisor
+  # Step 3: Update Supervisor Configuration for Verbose Logging
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'update-supervisor-config'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'echo "loglevel=debug" | sudo tee -a /etc/supervisor/supervisord.conf']
+
+  # Step 4: Restart Supervisor to Apply New Configuration
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'restart-supervisor'
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo supervisorctl reread; sudo supervisorctl update; sudo service supervisor restart']
+
+  # Step 5: Restart Node.js Application using Supervisor
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'restart-nodeapp'
-    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo supervisorctl restart nodeapp']
+    args: ['compute', 'ssh', 'nodebase', '--zone', 'us-west4-b', '--command', 'sudo supervisorctl stop nodeapp; sudo supervisorctl start nodeapp']
+
