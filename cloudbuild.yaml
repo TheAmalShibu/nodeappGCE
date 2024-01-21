@@ -7,9 +7,10 @@ steps:
   #- name: 'gcr.io/cloud-builders/npm'
   #  args: ['test']
 
-  # Step 3: Archive the application code
-  - name: 'ubuntu'
-    args: ['tar', '-czf', 'nodeapp.tar.gz', '.']
+  # Step 3: Archive the application code using Cloud Builders
+  - name: 'gcr.io/cloud-builders/gsutil'
+    entrypoint: 'bash'
+    args: ['-c', 'tar -czf nodeapp.tar.gz .']
 
   # Step 4: Upload the archive to Cloud Storage
   - name: 'gcr.io/cloud-builders/gsutil'
@@ -17,5 +18,5 @@ steps:
 
 # Substitute the $PROJECT_ID and $SHORT_SHA environment variables
 substitutions:
-  _PROJECT_ID: 'your-gcp-project-id' # Replace with your GCP project ID
-  _SHORT_SHA: 'short-sha' # This is automatically replaced by Cloud Build with the short SHA of the commit
+  _PROJECT_ID: 'your-gcp-project-id'  # Replace with your GCP project ID
+  _SHORT_SHA: 'short-sha'  # This is automatically replaced by Cloud Build with the short SHA of the commit
