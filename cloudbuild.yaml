@@ -1,12 +1,11 @@
 steps:
-  # Step 1: Copy the application files to Cloud Storage
-  # This step assumes that your application doesn't need a build process and can run directly from the source files
+  # Step 1: Sync application files to Cloud Storage
   - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', '-r', '.', 'gs://ss-devops-408816-artifactbucket/latest-nodeapp/']
+    args: ['rsync', '-r', '.', 'gs://ss-devops-408816-artifactbucket/latest-nodeapp/']
 
   # Step 2: Trigger a rolling update of the Managed Instance Group
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['compute', 'instance-groups', 'managed', 'rolling-restart', 'nodegroup', '--zone=us-west4']
+    args: ['compute', 'instance-groups', 'managed', 'rolling-action', 'replace', 'nodegroup', '--zone=us-west4']
 
 # Define substitution variables used in your build
 substitutions:
