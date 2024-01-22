@@ -1,18 +1,13 @@
 steps:
-  # Step 0: List files in the current directory
-  - name: 'ubuntu'
+  # Step 1: Archive the application code excluding node_modules
+  - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
-    args: ['-c', 'ls -al']
-
-  # Step 1: Use find to list and tar files
-  - name: 'ubuntu'
-    entrypoint: 'bash'
-    args: ['-c', 'find . -type f -print0 | tar --null -czvf nodeapp.tar.gz --exclude=node_modules --files-from=-']
+    args: ['-c', 'tar --exclude=node_modules -czf nodeapp.tar.gz .']
 
   # Step 2: Upload the archive to Cloud Storage
   - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', 'nodeapp.tar.gz', 'gs://$PROJECT_ID-node-app-source/nodeapp-$SHORT_SHA.tar.gz']
+    args: ['cp', 'nodeapp.tar.gz', 'gs://ss-devops-408816-artifactbucket/nodeapp-$SHORT_SHA.tar.gz']
 
+# Substitute the SHORT_SHA environment variable
 substitutions:
-  _PROJECT_ID: 'your-gcp-project-id'
-  _SHORT_SHA: 'short-sha'
+  _SHORT_SHA: 'short-sha'  # Automatically replaced by Cloud Build with the short SHA of the commit
