@@ -4,14 +4,10 @@ steps:
     entrypoint: 'bash'
     args: ['-c', 'ls -al']
 
-  # Archive the application code excluding node_modules
-  - name: 'gcr.io/cloud-builders/gcloud'
+  # Use find to list and tar files
+  - name: 'ubuntu'
     entrypoint: 'bash'
-    args: ['-c', 'tar --exclude=node_modules -czf nodeapp.tar.gz .']
-
-  # Upload the archive to Cloud Storage
-  - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', 'nodeapp.tar.gz', 'gs://$PROJECT_ID-node-app-source/nodeapp-$SHORT_SHA.tar.gz']
+    args: ['-c', 'find . -type f -print0 | tar --null -czvf nodeapp.tar.gz --exclude=node_modules --files-from=- && gsutil cp nodeapp.tar.gz gs://$PROJECT_ID-node-app-source/nodeapp-$SHORT_SHA.tar.gz']
 
 substitutions:
   _PROJECT_ID: 'your-gcp-project-id'
