@@ -1,17 +1,13 @@
 steps:
-  # Step 0: List files in the current directory
+  # Step 1: Create a tar.gz archive of your application
   - name: 'ubuntu'
     entrypoint: 'bash'
-    args: ['-c', 'ls -al']
-
-  # Step 1: Use find to list and tar files
-  - name: 'ubuntu'
-    entrypoint: 'bash'
-    args: ['-c', 'find . -type f -print0 | tar --null -czvf nodeapp.tar.gz --exclude=node_modules --files-from=-']
+    args: ['-c', 'tar -czf nodeapp.tar.gz --exclude=node_modules --exclude=.git .']
 
   # Step 2: Upload the archive to Cloud Storage
   - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', 'nodeapp.tar.gz', 'gs://ss-devops-408816-artifactbucket/nodeapp-$SHORT_SHA.tar.gz']
+    args: ['cp', 'nodeapp.tar.gz', 'gs://ss-devops-408816-artifactbucket/latest-nodeapp.tar.gz']
 
+# Here, you can define substitution variables that might be used in your build
 substitutions:
-  _SHORT_SHA: 'short-sha'
+  _GCS_BUCKET: 'ss-devops-408816-artifactbucket'
