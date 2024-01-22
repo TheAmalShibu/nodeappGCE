@@ -1,12 +1,13 @@
 steps:
-  # Step 1: Archive the application code, excluding node_modules, .git, and other unnecessary files
-  - name: 'gcr.io/cloud-builders/gcloud'
+  # Step 1: Archive the application code in Ubuntu environment
+  - name: 'ubuntu'
     entrypoint: 'bash'
-    args: ['-c', 'tar --exclude=node_modules --exclude=.git --exclude=other_temporary_dirs -czf nodeapp.tar.gz .']
+    args: ['-c', 'tar --exclude=node_modules --exclude=.git -czf nodeapp.tar.gz .']
 
-  # Step 2: Upload the archive to Cloud Storage
-  - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', 'nodeapp.tar.gz', 'gs://ss-devops-408816-artifactbucket/nodeapp-$SHORT_SHA.tar.gz']
+  # Step 2: Install gsutil and upload the archive to Cloud Storage in the same Ubuntu environment
+  - name: 'ubuntu'
+    entrypoint: 'bash'
+    args: ['-c', 'apt-get update && apt-get install -y google-cloud-sdk && gsutil cp nodeapp.tar.gz gs://ss-devops-408816-artifactbucket/nodeapp-$SHORT_SHA.tar.gz']
 
 substitutions:
   _SHORT_SHA: 'short-sha'  # Automatically replaced by Cloud Build with the short SHA of the commit
