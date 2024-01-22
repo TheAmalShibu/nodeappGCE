@@ -3,14 +3,10 @@ steps:
   - name: 'gcr.io/cloud-builders/npm'
     args: ['install']
 
-  # Step 2: Run tests (if you have test scripts)
-  #- name: 'gcr.io/cloud-builders/npm'
-  #  args: ['test']
-
-  # Step 3: Archive the application code excluding node_modules
+  # Step 2: Archive specific files and directories
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
-    args: ['-c', 'tar --exclude=node_modules -czf nodeapp.tar.gz . && gsutil cp nodeapp.tar.gz gs://$PROJECT_ID-node-app-source/nodeapp-$SHORT_SHA.tar.gz']
+    args: ['-c', 'tar --exclude=node_modules --exclude=logs --exclude=temp -czf nodeapp.tar.gz . && gsutil cp nodeapp.tar.gz gs://$PROJECT_ID-node-app-source/nodeapp-$SHORT_SHA.tar.gz']
 
 # Substitute the $PROJECT_ID and $SHORT_SHA environment variables
 substitutions:
