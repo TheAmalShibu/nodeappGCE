@@ -4,10 +4,10 @@ steps:
     entrypoint: 'bash'
     args: ['-c', 'tar --exclude=node_modules --exclude=.git -czf nodeapp.tar.gz .']
 
-  # Step 2: Install gsutil and upload the archive to Cloud Storage in the same Ubuntu environment
+  # Step 2: Install Google Cloud SDK and upload the archive to Cloud Storage in the same Ubuntu environment
   - name: 'ubuntu'
     entrypoint: 'bash'
-    args: ['-c', 'apt-get update && apt-get install -y google-cloud-sdk && gsutil cp nodeapp.tar.gz gs://ss-devops-408816-artifactbucket/nodeapp-$SHORT_SHA.tar.gz']
+    args: ['-c', 'apt-get update && apt-get install -y curl gnupg && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && apt-get update && apt-get install -y google-cloud-sdk && gsutil cp nodeapp.tar.gz gs://ss-devops-408816-artifactbucket/nodeapp-$SHORT_SHA.tar.gz']
 
 substitutions:
-  _SHORT_SHA: 'short-sha'  # Automatically replaced by Cloud Build with the short SHA of the commit
+  _SHORT_SHA: 'short-sha'
