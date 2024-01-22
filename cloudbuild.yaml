@@ -11,5 +11,9 @@ steps:
   - name: 'gcr.io/cloud-builders/gcloud'
     args: ['compute', 'instance-groups', 'managed', 'rolling-restart', 'nodegroup', '--zone=us-west4']
 
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['compute', 'instance-groups', 'managed', 'rolling-restart', 'nodegroup', '--zone=us-west4']
+
 substitutions:
   _GCS_BUCKET: 'ss-devops-408816-artifactbucket'
