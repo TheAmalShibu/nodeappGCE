@@ -1,14 +1,10 @@
 steps:
-  # Step 1: Create a tar.gz archive of your application
-  - name: 'ubuntu'
-    entrypoint: 'bash'
-    args: ['-c', 'tar -czf nodeapp.tar.gz --exclude=node_modules --exclude=.git .']
-
-  # Step 2: Upload the archive to Cloud Storage
+  # Step 1: Copy the application files to Cloud Storage
+  # This step assumes that your application doesn't need a build process and can run directly from the source files
   - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', 'nodeapp.tar.gz', 'gs://ss-devops-408816-artifactbucket/latest-nodeapp.tar.gz']
+    args: ['cp', '-r', '.', 'gs://ss-devops-408816-artifactbucket/latest-nodeapp/']
 
-  # Step 3: Trigger a rolling update of the Managed Instance Group
+  # Step 2: Trigger a rolling update of the Managed Instance Group
   - name: 'gcr.io/cloud-builders/gcloud'
     args: ['compute', 'instance-groups', 'managed', 'rolling-restart', 'nodegroup', '--zone=us-west4']
 
