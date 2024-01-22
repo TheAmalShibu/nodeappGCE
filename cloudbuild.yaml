@@ -8,11 +8,10 @@ steps:
   - name: 'gcr.io/cloud-builders/gsutil'
     args: ['cp', 'nodeapp.tar.gz', 'gs://ss-devops-408816-artifactbucket/latest-nodeapp.tar.gz']
 
-
   # Step 3: Initiate a rolling restart of the Managed Instance Group
   - name: 'gcr.io/cloud-builders/gcloud'
     args: ['compute', 'instance-groups', 'managed', 'rolling-restart', 'nodegroup', '--zone=us-west4']
-
+    
 # Here, you can define substitution variables that might be used in your build
 substitutions:
   _GCS_BUCKET: 'ss-devops-408816-artifactbucket'
