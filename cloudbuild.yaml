@@ -1,12 +1,16 @@
 steps:
-  # Step 1: Create a tar.gz archive of your application
+  # Step 1: Package your Node.js application
   - name: 'ubuntu'
     entrypoint: 'bash'
     args: ['-c', 'tar -czf nodeapp.tar.gz --exclude=node_modules --exclude=.git .']
 
-  # Step 2: Upload the archive to Cloud Storage
+  # Step 2: Upload the package to Google Cloud Storage
   - name: 'gcr.io/cloud-builders/gsutil'
     args: ['cp', 'nodeapp.tar.gz', 'gs://ss-devops-408816-artifactbucket/latest-nodeapp.tar.gz']
+
+  # Step 3: Trigger a rolling update in the managed instance group
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['compute', 'instance-groups', 'managed', 'rolling-restart', 'nodegroup', '--zone=us-west4']
 
 # Here, you can define substitution variables that might be used in your build
 substitutions:
