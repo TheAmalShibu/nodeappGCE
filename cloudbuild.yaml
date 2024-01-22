@@ -5,7 +5,7 @@ steps:
 
   # Step 2: Trigger a rolling update of the Managed Instance Group
   - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['compute', 'instance-groups', 'managed', 'rolling-action', 'replace', 'nodegroup', '--zone=us-west4']
+    args: ['compute', 'instance-groups', 'managed', 'rolling-action', 'replace', 'nodegroup', '--zone=	us-west4-a']
 
 # Define substitution variables used in your build
 substitutions:
