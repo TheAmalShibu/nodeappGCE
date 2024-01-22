@@ -1,13 +1,17 @@
 steps:
-  # List files in the current directory
+  # Step 0: List files in the current directory
   - name: 'ubuntu'
     entrypoint: 'bash'
     args: ['-c', 'ls -al']
 
-  # Use find to list and tar files
+  # Step 1: Use find to list and tar files
   - name: 'ubuntu'
     entrypoint: 'bash'
-    args: ['-c', 'find . -type f -print0 | tar --null -czvf nodeapp.tar.gz --exclude=node_modules --files-from=- && gsutil cp nodeapp.tar.gz gs://$PROJECT_ID-node-app-source/nodeapp-$SHORT_SHA.tar.gz']
+    args: ['-c', 'find . -type f -print0 | tar --null -czvf nodeapp.tar.gz --exclude=node_modules --files-from=-']
+
+  # Step 2: Upload the archive to Cloud Storage
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['cp', 'nodeapp.tar.gz', 'gs://$PROJECT_ID-node-app-source/nodeapp-$SHORT_SHA.tar.gz']
 
 substitutions:
   _PROJECT_ID: 'your-gcp-project-id'
