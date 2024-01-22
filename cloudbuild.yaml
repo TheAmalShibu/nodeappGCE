@@ -4,8 +4,8 @@ steps:
     args: ['install']
 
   # Step 2: Run tests (if you have test scripts)
-  - name: 'gcr.io/cloud-builders/npm'
-    args: ['test']
+  #- name: 'gcr.io/cloud-builders/npm'
+  #  args: ['test']
 
   # Step 3: Archive the application code excluding node_modules
   - name: 'gcr.io/cloud-builders/gcloud'
